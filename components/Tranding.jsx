@@ -1,41 +1,41 @@
 import { View, Text, Dimensions, TouchableWithoutFeedback, Image } from 'react-native';
 import React from 'react';
-import Carousel from 'react-native-snap-carousel';
 
-const { width } = Dimensions.get('window');
-console.log(width)
+import Carousel from '@demfabris/react-native-snap-carousel';
+const window = Dimensions.get('window');
 
-const Tranding = ({data}) => {
-    console.log(data)
+
+const Tranding = ({ data }) => {
+  console.log(data);
   return (
-    // <View>
-    //   <Text className="text-white text-2xl font-bold mx-4 mt-10">Trending</Text>
-    //   <Carousel
-    //     data={data}
-    //     firstItem={1}
-    //     inactiveSlideOpacity={0.60}
-    //     renderItem={({ item }) => <MovieCard item={item} />}  // Correct JSX return
-    //     sliderWidth={width}
-    //     itemWidth={width * 0.7}
-    //     slideStyle={{ display: 'flex', alignItems: 'center' }}
-    //   />
-    // </View>
-    <View>
-      <Text className="text-white text-2xl font-bold mx-4 mt-10">{data}</Text>
+    <View >
+      <Text className="text-white text-2xl font-bold mx-4  mt-10 mb-5">Trending</Text>
+      <Carousel
+        data={data}
+        sliderWidth={window.width}
+        itemWidth={window.width * 0.62}
+        slideStyle={{ display: 'flex', alignItems: 'center',}}
+        firstItem={1}
+        loop={true}
+        layout={'default'}
+        renderItem={({ item , index }) => <MovieCard key={index} item={item} />}
+      />
     </View>
   );
 };
 
-// const MovieCard = ({ item }) => {
-//   return (
-//     <TouchableWithoutFeedback>
-//       <View className="flex-1">
-//         <Image source={{ uri: `https://media.themoviedb.org/t/p/w300_and_h450_bestv2${item.poster_path}` }} className="w-72 h-96 rounded-lg" />
-//         <Text className="text-white text-lg font-bold mt-2">/ </Text>
-//         <Text className="text-white text-lg mt-2">{item.vote_average}</Text>
-//       </View>
-//     </TouchableWithoutFeedback>
-//   );
-// };
+const MovieCard = ({ item }) => {
+  return (
+ 
+     <TouchableWithoutFeedback>
+      <Image
+          source={{ uri: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/uCr7Ov7Rpzx0c0EPqbPcoEruTYl.jpg" }}
+          style={{ width: window.width * 0.6, height: window.height * 0.4 }}
+          className="rounded-xl"
+        />
+      </TouchableWithoutFeedback>
+    
+  );
+};
 
 export default Tranding;

@@ -27,7 +27,7 @@ const Home = () => {
         </View>
       </SafeAreaView>
 
-      <ScrollView>
+      <ScrollView contentContainerStyle={{paddingBottom:10}}>
         <Tranding data={trending} />
       </ScrollView>
     </View>

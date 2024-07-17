@@ -14,6 +14,7 @@ import { HeartIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
+import NetInfo from '@react-native-community/netinfo';
 import Members from "../components/Members";
 import MovieList from "../components/MovieList";
 import { fetchMovieDetails , fetchMovieCereditApi , fetchSemilarMovies } from "../api";
@@ -29,6 +30,7 @@ const Movie = ({ route }) => {
   const [movie, setMovie] = useState(null);
   const [Cast, setCast] = useState([]);
   const [RelatedMovies, setRelatedMovies] = useState([]);
+  const [isConnected, setIsConnected] = useState(true); // Add state for internet connection
   // navigation
   const navigation = useNavigation();
   // getting movie id
@@ -36,27 +38,47 @@ const Movie = ({ route }) => {
 
   // use effect hook
   useEffect(() => {
-    getMovieDetails(id);
-    getMovieCast(id);
-    getRelatedMvies(id)
-    
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log('Connection type', state.type);
+      console.log('Is connected?', state.isConnected);
+      setIsConnected(state.isConnected);
+    });
 
-  }, [id]);
+    if (isConnected) {
+      getMovieDetails(id);
+      getMovieCast(id);
+      getRelatedMovies(id);
+    }
 
-  const getRelatedMvies = async (id) => {
+    return () => {
+      unsubscribe();
+    };
+  }, [id, isConnected]);
+
+  const getRelatedMovies = async (id) => {
     const data = await fetchSemilarMovies(id);
     setRelatedMovies(data);
   }
+
   // apis calls 
   const getMovieDetails = async () => {
     const data = await fetchMovieDetails(id);
     setMovie(data);
-
   };
 
   const getMovieCast = async () => {
     const data = await fetchMovieCereditApi(id);
     setCast(data);
+  }
+
+  if (!isConnected) {
+    return (
+      <View className="flex-1 bg-neutral-900 justify-center items-center">
+        <Text className="text-white text-lg">
+          Please turn on your data or WiFi.
+        </Text>
+      </View>
+    );
   }
 
   return (
@@ -112,7 +134,7 @@ const Movie = ({ route }) => {
             </Text>
           ) : null}
         </View>
-        {/* Genras */}
+        {/* Genres */}
         <View className="flex-row justify-center items-center  mx-4 space-x-2 my-2">
            {movie?.genres?.map((genre, index) => {
             const showDot = index+1 !== movie.genres.length;
@@ -138,8 +160,8 @@ const Movie = ({ route }) => {
       {/* cast members */}
       <Members cast={Cast} />
 
-      {/* related MOview */}
-      <MovieList title={"Releated Movies"} data={RelatedMovies} seeall={false} />
+      {/* related Movies */}
+      <MovieList title={"Related Movies"} data={RelatedMovies} seeAll={false} />
     </ScrollView>
   );
 };

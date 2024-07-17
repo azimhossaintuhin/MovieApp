@@ -11,8 +11,10 @@ const Members = ({cast}) => {
         <Text className="text-white font-bold mx-4">Top Members</Text>
 
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }} className="mt-4">
-              {cast?.map((item, index) => (
-                <TouchableOpacity key={index} onPress={()=>navigation.navigate("Person")} >
+              {cast?.map((item, index) => {
+                const id  =  item?.id
+                return(
+                  <TouchableOpacity key={index} onPress={()=>navigation.navigate("Person" ,{id})} >
                   <View className="flex-col items-center  justify-center mx-2 ">
                     <View className="overflow-hidden w-70 h-70 rounded-full bg-neutral-700 p-1">
                     <Image
@@ -25,7 +27,9 @@ const Members = ({cast}) => {
                     <Text className="text-neutral-400 text-sm">{item?.character}</Text>
                   </View>
                 </TouchableOpacity>
-              ))}
+                )
+                
+})}
             </ScrollView>
     </View>
   )

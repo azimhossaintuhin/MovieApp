@@ -8,7 +8,7 @@ const window = Dimensions.get('window');
 const Tranding = ({ data }) => {
 
   return (
-    <View style={{flex:1 , marginTop:10 , marginBottom:30}}>
+    <View style={{flex:1 , marginTop:3 , marginBottom:30}}>
       <Text className="text-white text-2xl font-bold mx-4  mt-10 mb-5">Trending</Text>
       <Carousel
         data={data}

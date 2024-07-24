@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, Platform, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, Platform, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Bars3CenterLeftIcon, MagnifyingGlassIcon } from 'react-native-heroicons/outline';
@@ -13,14 +13,17 @@ import MovieList from '../components/MovieList';
 const android = Platform.OS === 'android';
 
 const Home = () => {
+  // All State Is Defined Here
   const [trending, setTrending] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
   const [nowPlaying, setNowPlaying] = useState([]);
   const [topRated, setTopRated] = useState([]);
   const [isConnected, setIsConnected] = useState(true);
-
+  const [isRefreshed ,  setIsRefreshed] =  useState(true);
+  // For Navigamtion Purpose
   const navigation = useNavigation();
 
+  // checking internet connection
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
@@ -62,7 +65,7 @@ const Home = () => {
     const data = await fetchNowPlaying();
     setNowPlaying(data.results);
   };
-
+//  if internet is not connected tgen this will be shown
   if (!isConnected) {
     return (
       <View className="flex-1 bg-neutral-900 justify-center items-center">
@@ -72,7 +75,7 @@ const Home = () => {
       </View>
     );
   }
-
+// if internet is connected then this will be shown
   return (
     <View className="flex-1 bg-neutral-900">
       {/* icon and logo */}
@@ -88,15 +91,33 @@ const Home = () => {
         </View>
       </SafeAreaView>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 10 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 10 }} showsVerticalScrollIndicator={false} refreshControl={
+        <RefreshControl
+          refreshing={!isRefreshed}
+          onRefresh={() => {
+            
+            getTrending();
+            getUpcoming();
+            getTopRated();
+            getNowPlaying();
+            console.log("all api called")
+            setIsRefreshed(true);
+          }}
+        />
+      }>
         <Tranding data={nowPlaying} />
-        {/* upcoming movie */}
+        {/* trending movie */}
         <MovieList title={"Trending Movie"} data={trending} seeAll={true} />
+        {/* Upcoming Movie */}
         <MovieList title={"Upcoming Movie"} data={upcoming} seeAll={true} />
+        {/* Top Rated movie */}
         <MovieList title={"Top Rated Movie"} data={topRated} seeAll={true} />
       </ScrollView>
+      {console.log( "is refreshed",isRefreshed)}
     </View>
+
   );
+ 
 };
 
 export default Home;
